@@ -1,0 +1,649 @@
+{
+	"info": {
+		"_postman_id": "2ea0938e-948d-4061-be9b-ba7ef4946655",
+		"name": "Trello",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Board",
+			"item": [
+				{
+					"name": "Create a board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"if (responseCode.code === 200) {\r",
+									"    var jsonData = JSON.parse(responseBody);\r",
+									"    pm.environment.set(\"board_id\", jsonData.id);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "oauth1",
+							"oauth1": [
+								{
+									"key": "signatureMethod",
+									"value": "HMAC-SHA1",
+									"type": "string"
+								},
+								{
+									"key": "version",
+									"value": "1.0",
+									"type": "string"
+								},
+								{
+									"key": "addParamsToHeader",
+									"value": false,
+									"type": "boolean"
+								},
+								{
+									"key": "addEmptyParamsToSign",
+									"value": false,
+									"type": "boolean"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"{{board_name}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{board_url}}/?key={{apiKey}}&token={{apiToken}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{board_url}}",
+								""
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"tests[\"Board id is correct\"] = jsonData.id === pm.environment.get(\"board_id\");\r",
+									"tests[\"Board name is correct\"] = jsonData.name === pm.environment.get(\"board_name\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{board_url}}/{{board_id}}?key={{apiKey}}&token={{apiToken}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{board_url}}",
+								"{{board_id}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update board name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"tests[\"Board id is correct\"] = jsonData.id === pm.environment.get(\"board_id\");\r",
+									"tests[\"New board name is correct\"] = jsonData.name === pm.environment.get(\"new_board_name\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"{{new_board_name}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{board_url}}/{{board_id}}?key={{apiKey}}&token={{apiToken}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{board_url}}",
+								"{{board_id}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete board",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"tests[\"Response data is null\"] = jsonData._value === null;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{board_url}}/{{board_id}}?key={{apiKey}}&token={{apiToken}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{board_url}}",
+								"{{board_id}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "List",
+			"item": [
+				{
+					"name": "Create a list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"if (responseCode.code === 200) {\r",
+									"    var jsonData = JSON.parse(responseBody);\r",
+									"    pm.environment.set(\"list_id\", jsonData.id);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"{{list_name}}\",\r\n    \"idBoard\" : \"{{board_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{list_url}}/?key={{apiKey}}&token={{apiToken}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{list_url}}",
+								""
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"tests[\"List id is correct\"] = jsonData.id === pm.environment.get(\"list_id\");\r",
+									"tests[\"List name is correct\"] = jsonData.name === pm.environment.get(\"list_name\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{list_url}}/{{list_id}}?key={{apiKey}}&token={{apiToken}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{list_url}}",
+								"{{list_id}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update list name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"tests[\"List id is correct\"] = jsonData.id === pm.environment.get(\"list_id\");\r",
+									"tests[\"New list name is correct\"] = jsonData.name === pm.environment.get(\"new_list_name\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"{{new_list_name}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{list_url}}/{{list_id}}?key={{apiKey}}&token={{apiToken}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{list_url}}",
+								"{{list_id}}"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Card",
+			"item": [
+				{
+					"name": "Label",
+					"item": [
+						{
+							"name": "Create a label",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+											"\r",
+											"if (responseCode.code === 200) {\r",
+											"    var jsonData = JSON.parse(responseBody);\r",
+											"    pm.environment.set(\"label_id\", jsonData.id);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"color\" : \"{{label_color}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{card_url}}/{{card_id}}/labels?key={{apiKey}}&token={{apiToken}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{card_url}}",
+										"{{card_id}}",
+										"labels"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{apiKey}}"
+										},
+										{
+											"key": "token",
+											"value": "{{apiToken}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get label",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+											"\r",
+											"function getLabelIndex(label_id) {\r",
+											"    var labels = JSON.parse(responseBody);\r",
+											"    for (var i = 0; i < labels.length; i++) {\r",
+											"        if (labels[i].id === label_id) {\r",
+											"            return i;\r",
+											"        }\r",
+											"    }\r",
+											"    return -1;\r",
+											"}\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"var labelIndex = getLabelIndex(pm.environment.get(\"label_id\"));\r",
+											"tests[\"Label id is correct\"] = jsonData[labelIndex].id === pm.environment.get(\"label_id\");\r",
+											"tests[\"Label name is correct\"] = jsonData[labelIndex].name === pm.environment.get(\"label_name\");\r",
+											"tests[\"Label color is correct\"] = jsonData[labelIndex].color === pm.environment.get(\"label_color\");"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{card_url}}/{{card_id}}/labels?key={{apiKey}}&token={{apiToken}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{card_url}}",
+										"{{card_id}}",
+										"labels"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{apiKey}}"
+										},
+										{
+											"key": "token",
+											"value": "{{apiToken}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove label",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+											"\r",
+											"var jsonData = JSON.parse(responseBody);\r",
+											"tests[\"Response data is null\"] = jsonData._value === null;"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/{{card_url}}/{{card_id}}/idLabels/{{label_id}}?key={{apiKey}}&token={{apiToken}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{card_url}}",
+										"{{card_id}}",
+										"idLabels",
+										"{{label_id}}"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{apiKey}}"
+										},
+										{
+											"key": "token",
+											"value": "{{apiToken}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create a card",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"if (responseCode.code === 200) {\r",
+									"    var jsonData = JSON.parse(responseBody);\r",
+									"    pm.environment.set(\"card_id\", jsonData.id);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"{{card_name}}\",\r\n    \"idList\" : \"{{list_id}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/{{card_url}}/?key={{apiKey}}&token={{apiToken}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{card_url}}",
+								""
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update card description",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Delete card",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+									"\r",
+									"var jsonData = JSON.parse(responseBody);\r",
+									"tests[\"Response data is null\"] = jsonData._value === null;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/{{card_url}}/?key={{apiKey}}&token={{apiToken}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"{{card_url}}",
+								""
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "{{apiKey}}"
+								},
+								{
+									"key": "token",
+									"value": "{{apiToken}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
