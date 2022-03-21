@@ -27,31 +27,6 @@
 						}
 					],
 					"request": {
-						"auth": {
-							"type": "oauth1",
-							"oauth1": [
-								{
-									"key": "signatureMethod",
-									"value": "HMAC-SHA1",
-									"type": "string"
-								},
-								{
-									"key": "version",
-									"value": "1.0",
-									"type": "string"
-								},
-								{
-									"key": "addParamsToHeader",
-									"value": false,
-									"type": "boolean"
-								},
-								{
-									"key": "addEmptyParamsToSign",
-									"value": false,
-									"type": "boolean"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -158,48 +133,6 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "{{base_url}}/{{board_url}}/{{board_id}}?key={{apiKey}}&token={{apiToken}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"{{board_url}}",
-								"{{board_id}}"
-							],
-							"query": [
-								{
-									"key": "key",
-									"value": "{{apiKey}}"
-								},
-								{
-									"key": "token",
-									"value": "{{apiToken}}"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete board",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
-									"\r",
-									"var jsonData = JSON.parse(responseBody);\r",
-									"tests[\"Response data is null\"] = jsonData._value === null;"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "DELETE",
-						"header": [],
 						"url": {
 							"raw": "{{base_url}}/{{board_url}}/{{board_id}}?key={{apiKey}}&token={{apiToken}}",
 							"host": [
@@ -335,7 +268,9 @@
 									"\r",
 									"var jsonData = JSON.parse(responseBody);\r",
 									"tests[\"List id is correct\"] = jsonData.id === pm.environment.get(\"list_id\");\r",
-									"tests[\"New list name is correct\"] = jsonData.name === pm.environment.get(\"new_list_name\");"
+									"tests[\"New list name is correct\"] = jsonData.name === pm.environment.get(\"new_list_name\");\r",
+									"\r",
+									"postman.setNextRequest(\"Create a card\");"
 								],
 								"type": "text/javascript"
 							}
@@ -382,6 +317,64 @@
 			"name": "Card",
 			"item": [
 				{
+					"name": "Create Card",
+					"item": [
+						{
+							"name": "Create a card",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+											"\r",
+											"if (responseCode.code === 200) {\r",
+											"    var jsonData = JSON.parse(responseBody);\r",
+											"    pm.environment.set(\"card_id\", jsonData.id);\r",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\" : \"{{card_name}}\",\r\n    \"idList\" : \"{{list_id}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/{{card_url}}/?key={{apiKey}}&token={{apiToken}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"{{card_url}}",
+										""
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{apiKey}}"
+										},
+										{
+											"key": "token",
+											"value": "{{apiToken}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Label",
 					"item": [
 						{
@@ -407,7 +400,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"color\" : \"{{label_color}}\"\r\n}",
+									"raw": "{\r\n    \"color\" : \"{{label_color}}\",\r\n    \"name\" : \"{{label_name}}\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -541,7 +534,7 @@
 					]
 				},
 				{
-					"name": "Create a card",
+					"name": "Update card description",
 					"event": [
 						{
 							"listen": "test",
@@ -549,21 +542,20 @@
 								"exec": [
 									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
 									"\r",
-									"if (responseCode.code === 200) {\r",
-									"    var jsonData = JSON.parse(responseBody);\r",
-									"    pm.environment.set(\"card_id\", jsonData.id);\r",
-									"}"
+									"var jsonData = JSON.parse(responseBody);\r",
+									"tests[\"Card id is correct\"] = jsonData.id === pm.environment.get(\"card_id\");\r",
+									"tests[\"Card description is correct\"] = jsonData.desc === pm.environment.get(\"card_descr\");"
 								],
 								"type": "text/javascript"
 							}
 						}
 					],
 					"request": {
-						"method": "POST",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\" : \"{{card_name}}\",\r\n    \"idList\" : \"{{list_id}}\"\r\n}",
+							"raw": "{\r\n    \"desc\" : \"{{card_descr}}\" \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -571,12 +563,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/{{card_url}}/?key={{apiKey}}&token={{apiToken}}",
+							"raw": "{{base_url}}/{{card_url}}/{{card_id}}/?key={{apiKey}}&token={{apiToken}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{card_url}}",
+								"{{card_id}}",
 								""
 							],
 							"query": [
@@ -594,24 +587,13 @@
 					"response": []
 				},
 				{
-					"name": "Update card description",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
 					"name": "Delete card",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
-									"\r",
-									"var jsonData = JSON.parse(responseBody);\r",
-									"tests[\"Response data is null\"] = jsonData._value === null;"
+									"tests[\"Status code is 200\"] = responseCode.code === 200;"
 								],
 								"type": "text/javascript"
 							}
@@ -621,13 +603,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/{{card_url}}/?key={{apiKey}}&token={{apiToken}}",
+							"raw": "{{base_url}}/{{card_url}}/{{card_id}}?key={{apiKey}}&token={{apiToken}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"{{card_url}}",
-								""
+								"{{card_id}}"
 							],
 							"query": [
 								{
@@ -644,6 +626,48 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Delete board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"tests[\"Response data is null\"] = jsonData._value === null;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{board_url}}/{{board_id}}?key={{apiKey}}&token={{apiToken}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{board_url}}",
+						"{{board_id}}"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{apiKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{apiToken}}"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
