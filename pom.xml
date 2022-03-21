@@ -13,9 +13,8 @@
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <test.resources.dir>${project.build.testSourceDirectory}/../resources</test.resources.dir>
-        <testng.configs.path>${project.build.testOutputDirectory}/testng</testng.configs.path>
-        <testng.hw2.configs.path>${testng.configs.path}/homework_2</testng.hw2.configs.path>
+        <resources.path>${project.build.testOutputDirectory}</resources.path>
+        <testng.hw2.configs.path>${resources.path}/homework_2</testng.hw2.configs.path>
         <testng.suite.file>${testng.hw2.configs.path}/Homework2_Suite.xml</testng.suite.file>
 
         <testng.version>7.5</testng.version>

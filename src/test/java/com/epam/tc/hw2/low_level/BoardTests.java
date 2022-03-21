@@ -1,70 +1,74 @@
 package com.epam.tc.hw2.low_level;
 
+import static com.epam.tc.hw2.data.CommonData.BOARD_NAME;
+import static org.hamcrest.Matchers.*;
+
 import com.epam.tc.hw2.utils.BoardUtils;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import static org.hamcrest.Matchers.*;
 
 public class BoardTests {
 
-    private final String BOARD_NAME = "board";
-    private Response createdBoardResponse;
     private final String BOARD_DESCRIPTION = "board description";
 
     private BoardUtils boardUtils;
 
+    private Response createdBoardResponse;
+    private String createdBoardId;
+
     @BeforeMethod
     public void setUp() {
         boardUtils = new BoardUtils();
-        createdBoardResponse = boardUtils.createBoard(BOARD_NAME);
+        createdBoardResponse = boardUtils.createBoardRequest(BOARD_NAME);
+        createdBoardId = boardUtils.getBoardId(createdBoardResponse);
     }
 
-    @Test(description = "create a board with name and check status")
+    @AfterMethod
+    public void tearDown() {
+        boardUtils.deleteBoardRequest(createdBoardId);
+    }
+
+    @Test(description = "Create a board")
     public void createBoard() {
         createdBoardResponse.then()
-                .statusCode(HttpStatus.SC_OK)
-                .and()
-                .body("name", is(BOARD_NAME));
-        boardUtils.deleteBoard(boardUtils.getBoardId(createdBoardResponse));
+                .statusCode(HttpStatus.SC_OK);
+
+        Response getBoardResponse = boardUtils.getBoardByIdRequest(createdBoardId);
+        boardUtils.checkGetBody(getBoardResponse, createdBoardId, BOARD_NAME);
     }
 
-    @Test(description = "delete a board and check status")
+    @Test(description = "Delete a board")
     public void deleteBoard() {
-        boardUtils.deleteBoard(boardUtils.getBoardId(createdBoardResponse))
+        boardUtils.deleteBoardRequest(createdBoardId)
                 .then()
                 .statusCode(HttpStatus.SC_OK)
                 .and()
                 .body("_value", nullValue());
+
+        boardUtils.getBoardByIdRequest(createdBoardId).then()
+                .statusCode(HttpStatus.SC_NOT_FOUND);
     }
 
-    @Test(description = "get a board by id")
+    @Test(description = "Get a board by id")
     public void getCreatedBoardById() {
-        String boardId = boardUtils.getBoardId(createdBoardResponse);
-
-        boardUtils.getBoardById(boardId)
-                .then()
-                .statusCode(HttpStatus.SC_OK)
+        Response getBoardResponse = boardUtils.getBoardByIdRequest(createdBoardId);
+        boardUtils.checkGetBody(getBoardResponse, createdBoardId, BOARD_NAME)
                 .and()
-                .body("name", is(BOARD_NAME))
-                .body("id", is(boardId));
-
-        boardUtils.deleteBoard(boardId);
+                .statusCode(HttpStatus.SC_OK);
     }
 
-    @Test(description = "change description of the board")
+    @Test(description = "Change description of the board")
     public void updateBoard() {
-        String boardId = createdBoardResponse.then().extract().path("id");
-
-        boardUtils.updateBoardById(boardId, BOARD_DESCRIPTION)
+        boardUtils.updateBoardByIdRequest(createdBoardId, BOARD_DESCRIPTION)
                 .then()
-                .statusCode(HttpStatus.SC_OK)
-                .and()
-                .body("name", is(BOARD_NAME))
-                .body("id", is(boardId))
-                .body("desc", is(BOARD_DESCRIPTION));
+                .statusCode(HttpStatus.SC_OK);
 
-        boardUtils.deleteBoard(boardId);
+        Response getBoardResponse = boardUtils.getBoardByIdRequest(createdBoardId);
+        boardUtils.checkGetBody(getBoardResponse, createdBoardId, BOARD_NAME)
+                .and()
+                .body("desc", is(BOARD_DESCRIPTION));
     }
 }

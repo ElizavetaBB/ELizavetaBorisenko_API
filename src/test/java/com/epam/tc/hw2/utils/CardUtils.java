@@ -1,36 +1,42 @@
 package com.epam.tc.hw2.utils;
 
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
-
 import static io.restassured.RestAssured.given;
 
-public class CardUtils {
+import io.restassured.response.Response;
 
-    private final String DOMAIN = "https://api.trello.com/";
+public class CardUtils extends AbstractUtils {
+
     private final String CARDS_END_POINT = "/1/cards/";
-
-    private RequestSpecification REQUEST_SPECIFICATION;
+    private final String USER_CARDS_END_POINT = "/1/cards/%s";
 
     public CardUtils() {
-        PropertyReader propertyReader = new PropertyReader();
-        REQUEST_SPECIFICATION = new RequestSpecBuilder()
-                .setBaseUri(DOMAIN)
-                .addQueryParam("key", propertyReader.getProperty("key"))
-                .addQueryParam("token", propertyReader.getProperty("token"))
-                .addFilter(new RequestLoggingFilter())
-                .addFilter(new ResponseLoggingFilter())
-                .build();
+        super();
     }
 
-    public Response createCard(String cardName, String listId) {
-        return given(REQUEST_SPECIFICATION)
+    public Response createCardRequest(String cardName, String listId) {
+        return given(requestSpecification)
                 .queryParam("name", cardName)
                 .queryParam("idList", listId)
-                .header("Content-type", "application/json")
                 .post(CARDS_END_POINT);
+    }
+
+    public Response getCardRequest(String cardId) {
+        return given(requestSpecification)
+                .get(String.format(USER_CARDS_END_POINT, cardId));
+    }
+
+    public String getCardId(Response createdCardResponse) {
+        return createdCardResponse.then().extract().path("id");
+    }
+
+    public Response updateCardDescRequest(String cardId, String desc) {
+        return given(requestSpecification)
+                    .queryParam("desc", desc)
+                    .put(String.format(USER_CARDS_END_POINT, cardId));
+    }
+
+    public Response deleteCardRequest(String cardId) {
+        return given(requestSpecification)
+                .delete(String.format(USER_CARDS_END_POINT, cardId));
     }
 }
