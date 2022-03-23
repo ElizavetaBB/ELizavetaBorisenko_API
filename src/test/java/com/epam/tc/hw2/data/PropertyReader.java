@@ -1,4 +1,4 @@
-package com.epam.tc.hw2.utils;
+package com.epam.tc.hw2.data;
 
 import java.io.FileReader;
 import java.io.IOException;

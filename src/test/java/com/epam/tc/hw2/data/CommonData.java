@@ -1,6 +1,5 @@
 package com.epam.tc.hw2.data;
 
-import com.epam.tc.hw2.utils.PropertyReader;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
