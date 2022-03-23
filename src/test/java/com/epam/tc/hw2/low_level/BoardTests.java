@@ -1,9 +1,12 @@
 package com.epam.tc.hw2.low_level;
 
 import static com.epam.tc.hw2.data.CommonData.BOARD_NAME;
+import static com.epam.tc.hw2.data.CommonData.REQUEST_SPECIFICATION;
+import static com.epam.tc.hw2.data.TrelloURL.*;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
-import com.epam.tc.hw2.utils.BoardUtils;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.testng.annotations.AfterMethod;
@@ -14,61 +17,87 @@ public class BoardTests {
 
     private final String BOARD_DESCRIPTION = "board description";
 
-    private BoardUtils boardUtils;
-
     private Response createdBoardResponse;
-    private String createdBoardId;
+    private String boardId;
 
     @BeforeMethod
     public void setUp() {
-        boardUtils = new BoardUtils();
-        createdBoardResponse = boardUtils.createBoardRequest(BOARD_NAME);
-        createdBoardId = boardUtils.getBoardId(createdBoardResponse);
+        createdBoardResponse = given(REQUEST_SPECIFICATION)
+                .queryParam("name", BOARD_NAME)
+                .post(BOARDS_END_POINT);
+        boardId = createdBoardResponse.then().extract().path("id");
     }
 
     @AfterMethod
     public void tearDown() {
-        boardUtils.deleteBoardRequest(createdBoardId);
+        given(REQUEST_SPECIFICATION).delete(USER_BOARDS_END_POINT, boardId);
     }
 
     @Test(description = "Create a board")
     public void createBoard() {
-        createdBoardResponse.then()
-                .statusCode(HttpStatus.SC_OK);
+        createdBoardResponse
+                .then()
+                    .statusCode(HttpStatus.SC_OK);
 
-        Response getBoardResponse = boardUtils.getBoardByIdRequest(createdBoardId);
-        boardUtils.checkGetBody(getBoardResponse, createdBoardId, BOARD_NAME);
+        // check board exists
+        given(REQUEST_SPECIFICATION)
+                .when()
+                    .get(USER_BOARDS_END_POINT, boardId)
+                .then()
+                    .statusCode(HttpStatus.SC_OK)
+                .and()
+                    .body("id", is(boardId),
+                            "name", is(BOARD_NAME));
     }
 
     @Test(description = "Delete a board")
     public void deleteBoard() {
-        boardUtils.deleteBoardRequest(createdBoardId)
+        given(REQUEST_SPECIFICATION)
+                .when()
+                    .delete(USER_BOARDS_END_POINT, boardId)
                 .then()
-                .statusCode(HttpStatus.SC_OK)
+                    .statusCode(HttpStatus.SC_OK)
                 .and()
-                .body("_value", nullValue());
+                    .body("_value", nullValue());
 
-        boardUtils.getBoardByIdRequest(createdBoardId).then()
-                .statusCode(HttpStatus.SC_NOT_FOUND);
+        // check board doesn't exist
+        given(REQUEST_SPECIFICATION)
+                .when()
+                    .get(USER_BOARDS_END_POINT, boardId)
+                .then()
+                    .statusCode(HttpStatus.SC_NOT_FOUND);
     }
 
     @Test(description = "Get a board by id")
     public void getCreatedBoardById() {
-        Response getBoardResponse = boardUtils.getBoardByIdRequest(createdBoardId);
-        boardUtils.checkGetBody(getBoardResponse, createdBoardId, BOARD_NAME)
+        given(REQUEST_SPECIFICATION)
+                .when()
+                    .get(USER_BOARDS_END_POINT, boardId)
+                .then()
+                    .contentType(ContentType.JSON)
+                    .statusCode(HttpStatus.SC_OK)
                 .and()
-                .statusCode(HttpStatus.SC_OK);
+                    .body("id", is(boardId),
+                            "name", is(BOARD_NAME));
     }
 
     @Test(description = "Change description of the board")
     public void updateBoard() {
-        boardUtils.updateBoardByIdRequest(createdBoardId, BOARD_DESCRIPTION)
+        given(REQUEST_SPECIFICATION)
+                .when()
+                    .queryParam("desc", BOARD_DESCRIPTION)
+                    .put(USER_BOARDS_END_POINT, boardId)
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                    .statusCode(HttpStatus.SC_OK);
 
-        Response getBoardResponse = boardUtils.getBoardByIdRequest(createdBoardId);
-        boardUtils.checkGetBody(getBoardResponse, createdBoardId, BOARD_NAME)
+        given(REQUEST_SPECIFICATION)
+                .when()
+                    .get(USER_BOARDS_END_POINT, boardId)
+                .then()
+                    .statusLine("HTTP/1.1 200 OK")
                 .and()
-                .body("desc", is(BOARD_DESCRIPTION));
+                    .body("id", is(boardId),
+                        "desc", is(BOARD_DESCRIPTION));
     }
+
 }
