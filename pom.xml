@@ -15,11 +15,15 @@
 
         <resources.path>${project.build.testOutputDirectory}</resources.path>
         <testng.hw2.configs.path>${resources.path}/homework_2</testng.hw2.configs.path>
-        <testng.suite.file>${testng.hw2.configs.path}/Homework2_Suite.xml</testng.suite.file>
+        <testng.hw3.configs.path>${resources.path}/homework_3</testng.hw3.configs.path>
+        <testng.suite.file>${testng.hw3.configs.path}/Homework3_Suite.xml</testng.suite.file>
 
         <testng.version>7.5</testng.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-        <rest-assured.version>4.4.0</rest-assured.version>
+        <rest-assured.version>4.5.1</rest-assured.version>
+        <assertj-core.version>3.22.0</assertj-core.version>
+        <lombok.version>1.18.22</lombok.version>
+        <gson.version>2.9.0</gson.version>
     </properties>
 
     <dependencies>
@@ -33,7 +37,21 @@
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <version>${rest-assured.version}</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
         </dependency>
 
     </dependencies>
@@ -59,6 +77,12 @@
             <id>Homework2</id>
             <properties>
                 <testng.suite.file>${testng.hw2.configs.path}/Homework2_Suite.xml</testng.suite.file>
+            </properties>
+        </profile>
+        <profile>
+            <id>Homework3</id>
+            <properties>
+                <testng.suite.file>${testng.hw3.configs.path}/Homework3_Suite.xml</testng.suite.file>
             </properties>
         </profile>
     </profiles>
