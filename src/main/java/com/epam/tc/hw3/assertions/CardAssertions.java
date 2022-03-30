@@ -30,15 +30,25 @@ public class CardAssertions {
         SoftAssertions softAssertions = new SoftAssertions();
         StickerDTO[] stickers = new CardSteps().getStickers(card.getId());
         for (int i = 0; i < expectedStickers.length; i++) {
-            softAssertions.assertThat(stickers[i].getImage()).as("Sticker image")
+            softAssertions
+                    .assertThat(stickers[i].getImage())
+                    .as("Sticker image")
                     .isEqualTo(expectedStickers[i].getImage());
-            softAssertions.assertThat(stickers[i].getLeft()).as("Sticker left position")
+            softAssertions
+                    .assertThat(stickers[i].getLeft())
+                    .as("Sticker left position")
                     .isEqualTo(stickers[i].getLeft());
-            softAssertions.assertThat(stickers[i].getTop()).as("Sticker right position")
+            softAssertions
+                    .assertThat(stickers[i].getTop())
+                    .as("Sticker right position")
                     .isEqualTo(expectedStickers[i].getTop());
-            softAssertions.assertThat(stickers[i].getZIndex()).as("Sticker zIndex")
+            softAssertions
+                    .assertThat(stickers[i].getZIndex())
+                    .as("Sticker zIndex")
                     .isEqualTo(expectedStickers[i].getZIndex());
-            softAssertions.assertThat(stickers[i].getIdCard()).as("Sticker idCard")
+            softAssertions
+                    .assertThat(stickers[i].getIdCard())
+                    .as("Sticker idCard")
                     .isEqualTo(expectedStickers[i].getIdCard());
         }
         softAssertions.assertAll();

@@ -4,5 +4,4 @@ public class BaseData {
 
     public static final String BOARD_NAME = "board";
     public static final String LIST_NAME = "list";
-    public static final String CARD_NAME = "card";
 }

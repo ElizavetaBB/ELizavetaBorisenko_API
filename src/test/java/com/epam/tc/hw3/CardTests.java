@@ -43,16 +43,25 @@ public class CardTests {
     @Test(description = "Create a card and check it was created",
             dataProviderClass = TrelloDataProvider.class, dataProvider = "Card names")
     public void createCard(String name) {
-        String cardId = cardSteps.createCard(name, list).getId();
+        String cardId = cardSteps
+                .createCard(name, list)
+                .getId();
+
         CardDTO card = cardSteps.getCardById(cardId);
-        cardAssertions.verifyId(card, cardId).verifyName(card, name).verifyListId(card, list.getId());
+        cardAssertions
+                .verifyId(card, cardId)
+                .verifyName(card, name)
+                .verifyListId(card, list.getId());
     }
 
     @Test(description = "Create stickers on a card and check they were created",
             dataProviderClass = TrelloDataProvider.class, dataProvider = "Stickers")
     public void createStickers(String cardName, StickerDTO... stickers) {
-        String cardId = cardSteps.createCard(cardName, list).getId();
+        String cardId = cardSteps
+                .createCard(cardName, list)
+                .getId();
         cardSteps.createStickers(cardId, stickers);
+
         CardDTO card = cardSteps.getCardById(cardId);
         cardAssertions.verifyStickers(card, stickers);
     }
@@ -60,7 +69,9 @@ public class CardTests {
     @Test(description = "Delete a card and check it was deleted",
             dataProviderClass = TrelloDataProvider.class, dataProvider = "Card names")
     public void deleteCard(String name) {
-        String cardId = cardSteps.createCard(name, list).getId();
+        String cardId = cardSteps
+                .createCard(name, list)
+                .getId();
         Response response = cardSteps.deleteCard(cardId);
         cardAssertions.verifyDeletedCard(response);
 

@@ -37,7 +37,9 @@ public class ListTests {
     @Test(description = "Create a list and check it was created",
             dataProviderClass = TrelloDataProvider.class, dataProvider = "List names")
     public void createList(String listName) {
-        String listId = listSteps.createList(listName, board).getId();
+        String listId = listSteps
+                .createList(listName, board)
+                .getId();
 
         ListDTO list = listSteps.getListById(listId);
         listAssertions.verifyId(list, listId).verifyName(list, listName).verifyBoardId(list, board.getId());
@@ -45,7 +47,9 @@ public class ListTests {
 
     @Test(description = "Create a list on a board and delete the board")
     public void deleteBoardWithList() {
-        String listId = listSteps.createList(BaseData.LIST_NAME, board).getId();
+        String listId = listSteps
+                .createList(BaseData.LIST_NAME, board)
+                .getId();
         boardSteps.deleteBoard(board.getId());
 
         Response list = listSteps.getListResponse(listId);

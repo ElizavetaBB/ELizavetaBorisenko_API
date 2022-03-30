@@ -31,15 +31,22 @@ public class BoardTests {
     @Test(description = "Create a board and check it was created",
             dataProviderClass = TrelloDataProvider.class, dataProvider = "Board names")
     public void createBoard(String name) {
-        boardId = boardSteps.createBoard(name).getId();
+        boardId = boardSteps
+                .createBoard(name)
+                .getId();
+
         BoardDTO board = boardSteps.getBoardById(boardId);
-        boardAssertions.verifyId(board, boardId).verifyName(board, name);
+        boardAssertions
+                .verifyId(board, boardId)
+                .verifyName(board, name);
     }
 
     @Test(description = "Delete a board and check it was deleted",
             dataProviderClass = TrelloDataProvider.class, dataProvider = "Board names")
     public void deleteBoard(String name) {
-        boardId = boardSteps.createBoard(name).getId();
+        boardId = boardSteps
+                .createBoard(name)
+                .getId();
         Response response = boardSteps.deleteBoard(boardId);
         boardAssertions.verifyDeletedBoard(response);
 
@@ -50,7 +57,9 @@ public class BoardTests {
     @Test(description = "Delete a board twice",
             dataProviderClass = TrelloDataProvider.class, dataProvider = "Board names")
     public void deleteBoardTwice(String name) {
-        boardId = boardSteps.createBoard(name).getId();
+        boardId = boardSteps
+                .createBoard(name)
+                .getId();
         boardSteps.deleteBoard(boardId);
 
         Response response = boardSteps.deleteBoard(boardId);
