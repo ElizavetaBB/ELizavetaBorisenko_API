@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 
 import com.epam.tc.hw3.utils.PropertyReader;
 import com.epam.tc.hw3.utils.URI;
+import com.google.gson.Gson;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -29,24 +30,49 @@ public class CommonService {
                 .build();
     }
 
-    public Response getWithOKCode(String uri) {
+    public Response makeRequest(Request request, String uri) {
+        switch (request) {
+            case GET:
+                return get(uri);
+            case GET_OK:
+                return getWithOKCode(uri);
+            case DELETE:
+                return delete(uri);
+            default:
+                throw new IllegalArgumentException("Request type isn't appropriate");
+        }
+    }
+
+    public Response makeRequestWithParams(Request request, String uri, Map<String, String> params) {
+        if (Request.POST.equals(request)) {
+            return post(uri, params);
+        } else {
+            throw new IllegalArgumentException("Request type isn't appropriate");
+        }
+    }
+
+    public <T> T fromResponseToDTO(Response response, Class<T> clazz) {
+        return new Gson().fromJson(response.getBody().asString(), clazz);
+    }
+
+    private Response getWithOKCode(String uri) {
         return given(REQUEST_SPECIFICATION).get(uri)
                 .then()
                     .statusCode(HttpStatus.SC_OK)
                 .extract().response();
     }
 
-    public Response get(String uri) {
+    private Response get(String uri) {
         return given(REQUEST_SPECIFICATION).get(uri)
                 .then()
                 .extract().response();
     }
 
-    public Response post(String uri, Map<String, String> params) {
+    private Response post(String uri, Map<String, String> params) {
         return given(REQUEST_SPECIFICATION).queryParams(params).post(uri);
     }
 
-    public Response delete(String uri) {
+    private Response delete(String uri) {
         return given(REQUEST_SPECIFICATION).delete(uri);
     }
 }

@@ -1,6 +1,7 @@
 package com.epam.tc.hw3.assertions;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
 import com.epam.tc.hw3.dto.CardDTO;
 import com.epam.tc.hw3.dto.StickerDTO;
@@ -11,18 +12,17 @@ import org.assertj.core.api.SoftAssertions;
 public class CardAssertions {
 
     public CardAssertions verifyName(CardDTO card, String expectedName) {
-        assertThat(card.getName()).as("Card has an appropriate name : " + expectedName)
-                .isEqualTo(expectedName);
+        assertEquals(card.getName(), expectedName);
         return this;
     }
 
     public CardAssertions verifyId(CardDTO card, String expectedId) {
-        assertThat(card.getId()).as("Card has an appropriate id : " + expectedId).isEqualTo(expectedId);
+        assertEquals(card.getId(), expectedId);
         return this;
     }
 
     public CardAssertions verifyListId(CardDTO card, String expectedId) {
-        assertThat(card.getIdList()).as("Card has an appropriate boardId : " + expectedId).isEqualTo(expectedId);
+        assertEquals(card.getIdList(), expectedId);
         return this;
     }
 
@@ -47,7 +47,7 @@ public class CardAssertions {
 
     public CardAssertions verifyDeletedCard(Response response) {
         String value = response.then().extract().path("_value");
-        assertThat(value).as("Response _value is null").isNull();
+        assertNull(value);
         return this;
     }
 }
