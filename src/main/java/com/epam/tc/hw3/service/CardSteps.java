@@ -50,12 +50,12 @@ public class CardSteps extends CommonService {
             params.put("top", String.valueOf(sticker.getTop()));
             params.put("left", String.valueOf(sticker.getLeft()));
             params.put("zIndex", String.valueOf(sticker.getZIndex()));
-            makeRequest(Method.POST, String.format(CARD_STICKERS_END_POINT, cardId), params);
+            makeRequest(Method.POST, CARDS_END_POINT + cardId + CARD_STICKERS_END_POINT, params);
         }
     }
 
     public StickerDTO[] getStickers(String cardId) {
-        Response response = makeRequest(Method.GET, String.format(CARD_STICKERS_END_POINT, cardId))
+        Response response = makeRequest(Method.GET, CARDS_END_POINT + cardId + CARD_STICKERS_END_POINT)
                 .then()
                     .statusCode(HttpStatus.SC_OK)
                 .extract()
